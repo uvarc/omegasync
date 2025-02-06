@@ -250,8 +250,8 @@ server <- function(input, output, session) {
             req(input$file)  # Ensure the file input is available
             
             tagList(
-              numericInput("Ac", label = HTML("<i>Ac</i>"), value = Ac, min = 8.0, max = 22.0, step = 1.0),
-              numericInput("As", label = HTML("<i>As</i>"), value = As, min = 5.0, max = 12.0, step = 1.0)
+              #numericInput("Ac", label = HTML("<i>Ac</i>"), value = Ac, min = 8.0, max = 22.0, step = 1.0),
+              #numericInput("As", label = HTML("<i>As</i>"), value = As, min = 5.0, max = 12.0, step = 1.0)
             )
           })
           
@@ -304,16 +304,6 @@ server <- function(input, output, session) {
   validate_email_format <- function(email) {
     grepl("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$", email)
   }
-  
-  # Render the numeric inputs after file is loaded
-  output$variable_selector <- renderUI({
-    req(input$file)
-    
-    tagList(
-      numericInput("Ac", label = HTML("<i>Ac</i>"), value = 0.0, min = 8.0, max = 22.0, step = 1.0),
-      numericInput("As", label = HTML("<i>As</i>"), value = 0.0, min = 5.0, max = 12.0, step = 1.0)
-    )
-  })
   
   # Show inputs upon file upload
   observeEvent(input$file, {
