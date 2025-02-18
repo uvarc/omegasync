@@ -4,12 +4,12 @@ metadata:
   name: {{ include "omegasync.fullname" . }}
 spec:
   accessModes:
-    - ReadWriteOnce
+    - ReadWriteMany
   volumeMode: Filesystem
   resources:
     requests:
       storage: 100Gi
-  storageClassName: csi-rbd-sc
+  storageClassName: omegasync-sc
   selector:
     matchLabels:
       app: "omegasync"
