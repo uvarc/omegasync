@@ -45,7 +45,7 @@ spec:
       volumes:
         - name: "yaml_files"
           persistentVolumeClaim:
-            claimName: omegasync-ceph-pvc
+            claimName: omegasync-cephfs-pvc
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
