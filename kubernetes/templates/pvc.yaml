@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: omegasync-cephfs-pvc
+  name: omegasync-ceph-pvc
 spec:
   accessModes:
     - ReadWriteMany
