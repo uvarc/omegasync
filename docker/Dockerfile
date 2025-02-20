@@ -32,12 +32,6 @@ RUN python3.10 -m pip install --no-cache-dir pandas numpy
 RUN mkdir -p /srv/shiny-server/yaml_files
 RUN mkdir -p /srv/shiny-server/www
 
-# Set correct permissions for the directory and ensure 'shiny' user has write access
-RUN chmod -R 777 /srv/shiny-server/yaml_files && chown -R shiny:shiny /srv/shiny-server/yaml_files
-RUN chmod -R 777 /srv/shiny-server/* 
-# Set the working directory for the Shiny app
-WORKDIR /srv/shiny-server
-
 # Copy the app's R code and files into the container
 COPY ../app.R /srv/shiny-server/
 COPY ../input_file_to_mtx.py /srv/shiny-server/
@@ -46,6 +40,12 @@ COPY ../www/fig1.png /srv/shiny-server/www/
 COPY ../www/fig2.png /srv/shiny-server/www/
 COPY ../www/fig3.png /srv/shiny-server/www/
 COPY ../www/sample_txt.txt /srv/shiny-server/www/
+
+# Set correct permissions for the directory and ensure 'shiny' user has write access
+RUN chmod -R 777 /srv/shiny-server/yaml_files && chown -R shiny:shiny /srv/shiny-server/yaml_files
+RUN chmod -R 777 /srv/shiny-server/* 
+# Set the working directory for the Shiny app
+WORKDIR /srv/shiny-server
 
 # Expose the port on which Shiny will run
 EXPOSE 3838
