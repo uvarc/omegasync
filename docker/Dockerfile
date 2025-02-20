@@ -34,7 +34,7 @@ RUN mkdir -p /srv/shiny-server/www
 
 # Set correct permissions for the directory and ensure 'shiny' user has write access
 RUN chmod -R 777 /srv/shiny-server/yaml_files && chown -R shiny:shiny /srv/shiny-server/yaml_files
-
+RUN chmod -R 777 /srv/shiny-server/* 
 # Set the working directory for the Shiny app
 WORKDIR /srv/shiny-server
 
