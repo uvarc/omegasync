@@ -40,6 +40,7 @@ COPY ../www/fig1.png /srv/shiny-server/www/
 COPY ../www/fig2.png /srv/shiny-server/www/
 COPY ../www/fig3.png /srv/shiny-server/www/
 COPY ../www/sample_txt.txt /srv/shiny-server/www/
+COPY ../www/omegasync_logo.png /srv/shiny-server/www/
 
 # Set correct permissions for the directory and ensure 'shiny' user has write access
 RUN chmod -R 777 /srv/shiny-server/yaml_files && chown -R shiny:shiny /srv/shiny-server/yaml_files

@@ -11,11 +11,39 @@ ui <- fluidPage(
     bootswatch = "litera"
   ),
   
+  tags$head(
+    # JavaScript to make the sidebar smoothly follow scrolling
+    tags$script(HTML("
+      $(document).ready(function() {
+        var sidebar = $('#sidebar-panel');
+        var startTop = sidebar.offset().top; // Initial position
+        var sidebarWidth = sidebar.outerWidth(); // Capture original width
+
+        $(window).scroll(function() {
+          var scrollTop = $(window).scrollTop();
+
+          // If scrolled beyond the initial position, make the sidebar fixed and shrink width
+          if (scrollTop > startTop) {
+            sidebar.css('position', 'fixed');
+            sidebar.css('top', startTop);
+            sidebar.css('width', sidebarWidth);  // New width after scroll
+          } else {
+            sidebar.css('position', 'absolute');
+            sidebar.css('top', startTop);
+            sidebar.css('width', sidebarWidth);  // Reset to original width
+          }
+        });
+      });
+    "))
+  ),
+  
   useShinyjs(),  # Enable shinyjs
-  titlePanel("OmegaSync"),
   
   sidebarLayout(
     sidebarPanel(
+      id = "sidebar-panel", # Make sure the sidebar has this id
+      img(src = "omegasync_logo.png", 
+          style = "width: 100%; height: auto; max-height: 150px; object-fit: contain;"),
       textInput("name", label = h3("Name"), value = "First Last"),
       textInput("email", label = h3("Email"), value = "Enter email address"),
       textInput("instance", label = h3("Instance Name"), value = "Name of instance"),
