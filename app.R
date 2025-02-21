@@ -14,60 +14,61 @@ ui <- fluidPage(
   tags$head(
     # JavaScript to make the sidebar smoothly follow scrolling
     tags$style(HTML("
-  #sidebar-panel {
-    min-width: 300px; /* Prevent scrunching of the sidebar */
-  }
-
-  /* Responsive adjustments */
-  @media (max-width: 767px) {
     #sidebar-panel {
-      position: relative !important; /* Remove any 'fixed' styles for mobile */
-      min-width: 100% !important; /* Make sure the sidebar takes up full width on mobile */
+      min-width: 300px; /* Prevent scrunching of the sidebar */
     }
 
-    .col-md-4 {
-      flex: 0 0 auto;
-      width: 100% !important;
+    /* Responsive adjustments */
+    @media (max-width: 767px) {
+      #sidebar-panel {
+        position: relative !important; /* Remove 'fixed' styles for mobile */
+        min-width: 100% !important; /* Sidebar takes up full width on mobile */
+      }
+
+      .col-12 {
+        width: 100% !important; /* Ensure sidebar takes full width on mobile */
+      }
     }
 
-    .col-md-8 {
-      flex: 0 0 auto;
-      width: 100% !important;
-    }
-  }
+    @media (min-width: 768px) {
+      #sidebar-panel {
+        position: relative;
+        min-width: 300px !important;
+      }
 
-  @media (min-width: 768px) {
-    #sidebar-panel {
-      position: relative;
-      min-width: 300px !important;
+      /* Medium screens */
+      .col-md-4 {
+        flex: 0 0 33.3333%; /* Ensuring the column is 33% on medium screens */
+      }
+
+      /* Large screens */
+      .col-lg-3 {
+        flex: 0 0 25%; /* Ensuring the column is 25% on large screens */
+      }
     }
-  }
-")),
+  ")),
     
     tags$script(HTML("
-    
-    
-    
-      $(document).ready(function() {
-        var sidebar = $('#sidebar-panel');
-        var startTop = sidebar.offset().top; // Initial position
+    $(document).ready(function() {
+      var sidebar = $('#sidebar-panel');
+      var startTop = sidebar.offset().top; // Initial position
 
-        $(window).scroll(function() {
-          var scrollTop = $(window).scrollTop();
+      $(window).scroll(function() {
+        var scrollTop = $(window).scrollTop();
 
-          // If scrolled beyond the initial position, make the sidebar fixed
-          if (scrollTop > startTop) {
-            sidebar.css('position', 'fixed');
-            sidebar.css('top', '20px');
-            sidebar.css('z-index', '9999');  // Ensure the sidebar stays on top
-          } else {
-            sidebar.css('position', 'absolute');
-            sidebar.css('top', startTop);
-            sidebar.css('z-index', '1');  // Return to normal z-index
-          }
-        });
+        // If scrolled beyond the initial position, make the sidebar fixed
+        if (scrollTop > startTop) {
+          sidebar.css('position', 'fixed');
+          sidebar.css('top', '20px');
+          sidebar.css('z-index', '9999');  // Ensure the sidebar stays on top
+        } else {
+          sidebar.css('position', 'absolute');
+          sidebar.css('top', startTop);
+          sidebar.css('z-index', '1');  // Return to normal z-index
+        }
       });
-    "))
+    });
+  "))
   ),
   
   useShinyjs(),  # Enable shinyjs
