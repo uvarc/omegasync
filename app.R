@@ -12,28 +12,28 @@ ui <- fluidPage(
   ),
   
   tags$head(
-    # JavaScript to make the sidebar smoothly follow scrolling
+    # Updated CSS to fix sidebar behavior
     tags$style(HTML("
     #sidebar-panel {
       min-width: 300px; /* Prevent scrunching of the sidebar */
     }
 
-    /* Responsive adjustments */
+    /* Mobile: Keep sidebar at the top and remove fixed positioning */
     @media (max-width: 767px) {
       #sidebar-panel {
-        position: relative !important; /* Remove 'fixed' styles for mobile */
-        min-width: 100% !important; /* Sidebar takes up full width on mobile */
-      }
-
-      .col-12 {
-        width: 100% !important; /* Ensure sidebar takes full width on mobile */
+        position: static !important; /* Sidebar stays in document flow */
+        min-width: 100% !important; /* Full width */
+        margin-bottom: 20px; /* Space below sidebar */
       }
     }
 
+    /* Tablet & larger: Use sticky positioning for smooth scrolling */
     @media (min-width: 768px) {
       #sidebar-panel {
-        position: relative;
+        position: sticky;
+        top: 20px; /* Keeps it visible without overlap */
         min-width: 300px !important;
+        z-index: 9999;
       }
 
       /* Medium screens */
@@ -48,28 +48,15 @@ ui <- fluidPage(
     }
   ")),
     
+    # Remove JavaScript-based scrolling logic (not needed anymore)
     tags$script(HTML("
     $(document).ready(function() {
-      var sidebar = $('#sidebar-panel');
-      var startTop = sidebar.offset().top; // Initial position
-
-      $(window).scroll(function() {
-        var scrollTop = $(window).scrollTop();
-
-        // If scrolled beyond the initial position, make the sidebar fixed
-        if (scrollTop > startTop) {
-          sidebar.css('position', 'fixed');
-          sidebar.css('top', '20px');
-          sidebar.css('z-index', '9999');  // Ensure the sidebar stays on top
-        } else {
-          sidebar.css('position', 'absolute');
-          sidebar.css('top', startTop);
-          sidebar.css('z-index', '1');  // Return to normal z-index
-        }
-      });
+      $('#sidebar-panel').css('position', 'sticky');
+      $('#sidebar-panel').css('top', '20px');
     });
   "))
   ),
+  
   
   useShinyjs(),  # Enable shinyjs
   
@@ -102,6 +89,7 @@ ui <- fluidPage(
       ),
       HTML("
     <div>
+      <br><br>
       <h2>Introduction</h2>
       <p>OmegaSync provides a service to compute the maximum cut (Max-Cut) of a graph.</p>
       <p>The Max-Cut can be defined as:</p>
