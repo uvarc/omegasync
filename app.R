@@ -90,7 +90,6 @@ ui <- fluidPage(
       HTML("
     <div>
       <br><br>
-      <p>test</p>
       <h2>Introduction</h2>
       <p>OmegaSync provides a service to compute the maximum cut (Max-Cut) of a graph.</p>
       <p>The Max-Cut can be defined as:</p>
