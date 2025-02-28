@@ -78,8 +78,8 @@ jobs:
             ghcr.io/uvarc/${{ env.BUILD_PROJ }}:${{ github.ref_name }}
 
       - name: Push Version to Repository
-        uses: stefanzweifel/git-auto-commit-action@v5
         if: github.ref != 'refs/heads/main'
+        uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "[skip ci] Bump Version - ${{ env.NEW_VERSION }}"
           branch: main
