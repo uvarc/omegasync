@@ -38,6 +38,7 @@ jobs:
           NEW_VERSION=$(echo $CURRENT_VERSION | awk -F. '{$NF++; print $1"."$2"."$3}' OFS=.)
           echo "NEW_VERSION: ${NEW_VERSION}"
           yq eval ".image.tag = \"${NEW_VERSION}\"" -i kubernetes/values.yaml
+          cat kubernetes/values.yaml
           echo "NEW_VERSION=${NEW_VERSION}" >> $GITHUB_ENV
 
       - name: Login to GHCR
