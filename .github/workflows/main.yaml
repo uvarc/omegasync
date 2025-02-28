@@ -37,6 +37,7 @@ jobs:
           echo "CURRENT_VERSION: ${CURRENT_VERSION}"
           NEW_VERSION=$(echo $CURRENT_VERSION | awk -F. '{$NF++; print $1"."$2"."$3}' OFS=.)
           echo "NEW_VERSION: ${NEW_VERSION}"
+          yq eval ".image.tag = \"${NEW_VERSION}\"" -i kubernetes/values.yaml
           echo "NEW_VERSION=${NEW_VERSION}" >> $GITHUB_ENV
 
       - name: Login to GHCR
@@ -75,3 +76,16 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           tags: |
             ghcr.io/uvarc/${{ env.BUILD_PROJ }}:${{ github.ref_name }}
+
+      - name: Push Version to Repository
+        uses: stefanzweifel/git-auto-commit-action@v5
+        if: github.ref != 'refs/heads/main'
+        with:
+          commit_message: "[skip ci] Bump Version - ${{ env.NEW_VERSION }}"
+          branch: main
+          file_pattern: 'kubernetes/values.yaml'
+          commit_user_name: GitHub Actions Bot
+          commit_user_email: github@virginia.edu
+          commit_author: GitHub Actions <github@virginia.edu>
+          tagging_message: ${{ env.NEW_VERSION }}
+          skip_fetch: true
