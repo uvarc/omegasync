@@ -10,20 +10,8 @@ jobs:
   build-for-git:
     runs-on: ubuntu-latest
     steps:
-#      - name: Free Up Disk Space
-#        run: |
-#          echo "Before cleanup:"
-#          df -h
-#          sudo rm -rf /usr/local/lib/android
-#          sudo rm -rf /usr/share/dotnet
-#          sudo rm -rf /opt/ghc
-#          sudo apt-get clean
-#          docker system prune -a -f
-#          echo "After cleanup:"
-#          df -h
-
       - name: Checkout Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
@@ -41,6 +29,15 @@ jobs:
           echo "Building release version $BRANCH_NAME"
           echo "BUILD_BRANCH=$BRANCH_NAME" >> $GITHUB_ENV
         id: extract_branch
+
+      - name: Get Next Version
+        if: github.ref == 'refs/heads/main'
+        run: |
+          CURRENT_VERSION=$(yq eval '.image.tag' kubernetes/values.yaml)
+          echo "CURRENT_VERSION: ${CURRENT_VERSION}"
+          NEW_VERSION=$(echo $CURRENT_VERSION | awk -F. '{$NF++; print $1"."$2"."$3}' OFS=.)
+          echo "NEW_VERSION: ${NEW_VERSION}"
+          echo "NEW_VERSION=${NEW_VERSION" >> $GITHUB_ENV
 
       - name: Login to GHCR
         uses: docker/login-action@v3
@@ -67,6 +64,7 @@ jobs:
           tags: |
             ghcr.io/uvarc/${{ env.BUILD_PROJ }}:${{ github.ref_name }}
             ghcr.io/uvarc/${{ env.BUILD_PROJ }}:latest
+            ghcr.io/uvarc/${{ env.BUILD_PROJ }}:${{ env.NEW_VERSION }}
 
       - name: Build and push (Other Branches)
         if: github.ref != 'refs/heads/main'
