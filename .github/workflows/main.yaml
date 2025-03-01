@@ -2,9 +2,7 @@ name: Docker Build CI
 
 on:
   push:
-    branches:
-      - 'main'
-  workflow_dispatch:
+    tags: ['*.*']
 
 jobs:
   build-for-git:
@@ -23,22 +21,19 @@ jobs:
         run: |
           echo "BUILD_PROJ=omegasync" >> $GITHUB_ENV
 
-      - name: Extract branch name
-        run: |
-          BRANCH_NAME=$(echo "${{ github.ref }}" | sed 's|refs/heads/||')
-          echo "Building release version $BRANCH_NAME"
-          echo "BUILD_BRANCH=$BRANCH_NAME" >> $GITHUB_ENV
-        id: extract_branch
+#      - name: Extract branch name
+#        run: |
+#          BRANCH_NAME=$(echo "${{ github.ref }}" | sed 's|refs/heads/||')
+#          echo "Building release version $BRANCH_NAME"
+#          echo "BUILD_BRANCH=$BRANCH_NAME" >> $GITHUB_ENV
+#        id: extract_branch
 
-      - name: Get Next Version
-        if: github.ref == 'refs/heads/main'
+      - name: Get Tag Version
         run: |
-          CURRENT_VERSION=$(yq eval '.image.tag' kubernetes/values.yaml)
-          echo "CURRENT_VERSION: ${CURRENT_VERSION}"
-          NEW_VERSION=$(echo $CURRENT_VERSION | awk -F. '{$NF++; print $1"."$2"."$3}' OFS=.)
-          echo "NEW_VERSION: ${NEW_VERSION}"
-          yq eval ".image.tag = \"${NEW_VERSION}\"" -i kubernetes/values.yaml
-          echo "NEW_VERSION=${NEW_VERSION}" >> $GITHUB_ENV
+          IMAGE_TAG=${GITHUB_REF#refs/tags/}
+          echo "IMAGE_TAG: ${IMAGE_TAG}"
+          yq eval ".image.tag = \"${IMAGE_TAG}\"" -i kubernetes/values.yaml
+          echo "IMAGE_TAG=${IMAGE_TAG}" >> $GITHUB_ENV
 
       - name: Login to GHCR
         uses: docker/login-action@v3
@@ -55,36 +50,35 @@ jobs:
           restore-keys: |
             docker-
 
-      - name: Build and push (Main Branch)
-        if: github.ref == 'refs/heads/main'
+      - name: Build and push
+#        if: github.ref == 'refs/heads/main'
         uses: docker/build-push-action@v6
         with:
           context: .
           file: ./docker/Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
           tags: |
-            ghcr.io/uvarc/${{ env.BUILD_PROJ }}:${{ github.ref_name }}
             ghcr.io/uvarc/${{ env.BUILD_PROJ }}:latest
-            ghcr.io/uvarc/${{ env.BUILD_PROJ }}:${{ env.NEW_VERSION }}
+            ghcr.io/uvarc/${{ env.BUILD_PROJ }}:${{ env.IMAGE_TAG }}
+#            ghcr.io/uvarc/${{ env.BUILD_PROJ }}:${{ github.ref_name }}
 
-      - name: Build and push (Other Branches)
-        if: github.ref != 'refs/heads/main'
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          file: ./docker/Dockerfile
-          push: ${{ github.event_name != 'pull_request' }}
-          tags: |
-            ghcr.io/uvarc/${{ env.BUILD_PROJ }}:${{ github.ref_name }}
+#      - name: Build and push (Other Branches)
+#        if: github.ref != 'refs/heads/main'
+#        uses: docker/build-push-action@v6
+#        with:
+#          context: .
+#          file: ./docker/Dockerfile
+#          push: ${{ github.event_name != 'pull_request' }}
+#          tags: |
+#            ghcr.io/uvarc/${{ env.BUILD_PROJ }}:${{ github.ref_name }}
 
       - name: Push Version to Repository
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: "[skip ci] Bump Version - ${{ env.NEW_VERSION }}"
+          commit_message: "[skip ci] Bump Version - ${{ env.IMAGE_TAG }}"
           branch: main
           file_pattern: 'kubernetes/values.yaml'
           commit_user_name: GitHub Actions Bot
           commit_user_email: github@virginia.edu
           commit_author: GitHub Actions <github@virginia.edu>
-          tagging_message: ${{ env.NEW_VERSION }}
           skip_fetch: true
