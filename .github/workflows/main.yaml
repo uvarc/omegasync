@@ -59,7 +59,7 @@ jobs:
         with:
           commit_message: "[skip ci] Update Version to Helm - ${{ env.IMAGE_TAG }}"
           branch: main
-          file_pattern: 'kubernetes/values.yaml'
+          file_pattern: 'kubernetes/prod/values.yaml'
           commit_user_name: GitHub Actions Bot
           commit_user_email: github@virginia.edu
           commit_author: GitHub Actions <github@virginia.edu>
