@@ -16,4 +16,6 @@ spec:
                 - /bin/sh
                 - -c
                 - date
+              resources:
+                {{- toYaml .Values.resources | nindent 16 }}
           restartPolicy: OnFailure

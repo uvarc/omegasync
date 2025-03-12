@@ -23,11 +23,11 @@ service:
   type: ClusterIP
 resources:
   limits:
-    cpu: 32
-    memory: 64Gi
+    cpu: 1
+    memory: 4Gi
   requests:
-    cpu: 32
-    memory: 64Gi
+    cpu: 500m
+    memory: 2Gi
 nodeSelector: {}
 tolerations: []
 affinity: {}
