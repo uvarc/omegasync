@@ -11,9 +11,16 @@ RUN apt-get update && apt-get install -y \
     curl \
     gdebi-core \
     libpng-dev \
+    mailutils \
+    postfix \
+    dnsutils \
+    iputils-ping \
     && add-apt-repository ppa:deadsnakes/ppa && apt-get update && \
     apt-get install -y python3.10 python3.10-distutils python3-pip \
     && rm -rf /var/lib/apt/lists/*
+
+RUN apt-get install -y postfix && \
+    systemctl enable postfix
 
 # Set up the Python 3.10 environment for reticulate
 ENV RETICULATE_PYTHON=/usr/bin/python3.10
@@ -34,6 +41,7 @@ RUN mkdir -p /srv/shiny-server/www
 
 # Copy the app's R code and files into the container
 COPY ../app.R /srv/shiny-server/
+COPY ../email.sh /srv/shiny-server/
 COPY ../input_file_to_mtx.py /srv/shiny-server/
 COPY ../mtx_file_check.py /srv/shiny-server/
 COPY ../www/fig1.png /srv/shiny-server/www/
