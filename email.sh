@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export OUTPUTS=/srv/shiny-server/yaml_files/processed
+export OUTPUTS=/srv/shiny-server/yaml_files/slurm/output/processed
 
 ls -1 $OUTPUTS | while IFS= read -r line; do
     subject=$(grep "subject" $OUTPUTS/$line/message.yaml | awk '{$1=""; print $0}')
