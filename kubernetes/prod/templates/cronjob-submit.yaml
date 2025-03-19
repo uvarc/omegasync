@@ -1,9 +1,9 @@
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: {{ include "omegasync.fullname" . }}-cronjob
+  name: {{ include "omegasync.fullname" . }}-submit-cronjob
 spec:
-  schedule: "*/5 * * * *"
+  schedule: "*/30 * * * *"
   jobTemplate:
     spec:
       template:
@@ -13,10 +13,9 @@ spec:
               image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
               imagePullPolicy: {{ .Values.image.pullPolicy }}
               command:
-                - /bin/sh
+                - /bin/bash
                 - -c
-                - ls -l /srv/shiny-server/yaml_files; date
-              #  - /srv/shiny-server/email.sh
+                - /srv/shiny-server/yaml_files/codes/submit.sh
               resources:
                 {{- toYaml .Values.resources | nindent 16 }}
               volumeMounts:
