@@ -3,7 +3,7 @@ kind: CronJob
 metadata:
   name: {{ include "omegasync.fullname" . }}-email-cronjob
 spec:
-  schedule: "*/30 * * * *"
+  schedule: "*/5 * * * *"
   jobTemplate:
     spec:
       template:
