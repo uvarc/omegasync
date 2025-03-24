@@ -9,20 +9,29 @@ spec:
       template:
         spec:
           containers:
-            - name: main
-              image: ghcr.io/uvarc/ssh:latest
-              imagePullPolicy: {{ .Values.image.pullPolicy }}
-              command:
-                - /bin/bash
-                - -c
-                - /srv/shiny-server/yaml_files/codes/submit.sh
-              resources:
-                {{- toYaml .Values.resources | nindent 16 }}
-              volumeMounts:
-                - name: yaml-files
-                  mountPath: /srv/shiny-server/yaml_files
+          - name: main
+            image: ghcr.io/uvarc/ssh:latest
+            imagePullPolicy: Always
+            command: ["/bin/bash", "/pull-newkey.sh"]
+            volumeMounts:
+            - name: ssh-key-volume
+              mountPath: "/etc/ssh-key"
+            env:
+            - name: REMOTE_SCRIPT
+              value: "/standard/CHRL-Space/omegasync/yamls/codes"
+            - name: USERID
+              value: "ns6pf"
+            resources:
+              limits:   
+                cpu: "0.5"
+                memory: 512Mi
+              requests: 
+                cpu: "0.5"
+                memory: 512Mi
           volumes:
-            - name: yaml-files
-              persistentVolumeClaim:
-                claimName: omegasync-cephfs-pvc
+          - name: ssh-key-volume
+            secret:
+              secretName: ns6pf-ssh-key
+              defaultMode: 256
           restartPolicy: OnFailure
+      ttlSecondsAfterFinished: 86400
