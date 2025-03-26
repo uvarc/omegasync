@@ -15,7 +15,7 @@ spec:
             command: ["/bin/bash", "/pull-newkey.sh"]
             volumeMounts:
             - name: ssh-key-volume
-              mountPath: "/etc/ssh-key"
+              mountPath: "/home/ns6pf/.ssh"
             env:
             - name: REMOTE_SCRIPT
               value: "/standard/CHRL-Space/omegasync/yamls/codes"
