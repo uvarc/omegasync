@@ -10,7 +10,7 @@ spec:
         spec:
           containers:
           - name: main
-            image: ghcr.io/uvarc/ssh:latest
+            image: ghcr.io/uvarc/uvarc-unified-service-base:develop
             imagePullPolicy: Always
             command: ["/bin/bash", "/pull-newkey.sh"]
             volumeMounts:
