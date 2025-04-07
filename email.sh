@@ -7,7 +7,7 @@ ls -1 $OUTPUTS | while IFS= read -r line; do
     email=$(grep "email" $OUTPUTS/$line/message.yaml | awk '{$1=""; print $0}')
     body=$(grep "body" $OUTPUTS/$line/message.yaml | awk '{$1=""; print $0}')
     
-    cat <<EOF # mailx -s "$subject" $email instead of cat
+    mailx -s "$subject" $email <<EOF # mailx -s "$subject" $email instead of cat
 Hello,
 
 $body
@@ -17,5 +17,7 @@ please reach out to ....@virginia.edu
 Best regards,
 OmegaSync Team
 EOF
+
+mv $OUTPUTS/$line $OUTPUTS/$line/sent
 
 done
