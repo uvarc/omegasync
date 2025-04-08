@@ -15,7 +15,7 @@ spec:
             command: ["/bin/bash", "/opt/local/non_root_user/uvarc_unified_service/bin/pull-newkey.sh"]
             volumeMounts:
             - name: ssh-key-volume
-              mountPath: "/home/ns6pf/.ssh"
+              mountPath: "/etc/ssh-key"
             env:
             - name: REMOTE_SCRIPT
               value: "/standard/CHRL-Space/omegasync/yamls/codes"
