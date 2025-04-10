@@ -2,14 +2,15 @@ apiVersion: batch/v1
 kind: CronJob
 metadata:
   name: {{ include "omegasync.fullname" . }}-submit-cronjob
+  namespace:  omegasync
 spec:
-  schedule: "0 0 * * *"
+  schedule: "0 */4 * * *"
   jobTemplate:
     spec:
       template:
         spec:
           containers:
-          - name: main
+          - name: omegasync-refresh-container
             image: ghcr.io/uvarc/uvarc-unified-service-base:develop
             imagePullPolicy: Always
             command: ["/bin/bash", "/opt/local/non_root_user/uvarc_unified_service/bin/pull-newkey.sh"]
@@ -18,10 +19,10 @@ spec:
               mountPath: "/etc/ssh-key"
             env:
             - name: REMOTE_SCRIPT
-              value: "/standard/CHRL-Space/omegasync/yamls/codes"
+              value: "/standard/CHRL-Space/omegasync/yamls/codes/submit.sh"
             - name: USERID
               value: "ns6pf"
-            resources:
+            resources:  
               limits:   
                 cpu: "0.5"
                 memory: 512Mi
