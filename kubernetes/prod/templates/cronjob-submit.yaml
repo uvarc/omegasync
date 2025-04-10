@@ -4,7 +4,7 @@ metadata:
   name: {{ include "omegasync.fullname" . }}-submit-cronjob
   namespace:  omegasync
 spec:
-  schedule: "0 */4 * * *"
+  schedule: "0 0 * * *"
   jobTemplate:
     spec:
       template:
