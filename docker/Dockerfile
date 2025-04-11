@@ -33,7 +33,9 @@ RUN R -e "install.packages(c('shiny', 'yaml', 'shinyjs', 'bslib', 'jsonlite', 'r
 
 
 # Install Python packages if needed
-RUN python3.10 -m pip install --no-cache-dir pandas numpy
+#RUN python3.10 -m pip install --no-cache-dir pandas numpy secure-smtplib email-validator yaml pathlib shutil
+RUN python3.10 -m pip install --no-cache-dir pandas numpy PyYAML email-validator
+
 
 # Create a directory for your app and the YAML files inside the container
 RUN mkdir -p /srv/shiny-server/yaml_files
@@ -41,7 +43,7 @@ RUN mkdir -p /srv/shiny-server/www
 
 # Copy the app's R code and files into the container
 COPY ../app.R /srv/shiny-server/
-COPY ../email.sh /srv/shiny-server/
+COPY ../messaging.py /srv/shiny-server/
 COPY ../input_file_to_mtx.py /srv/shiny-server/
 COPY ../mtx_file_check.py /srv/shiny-server/
 COPY ../www/fig1.png /srv/shiny-server/www/
