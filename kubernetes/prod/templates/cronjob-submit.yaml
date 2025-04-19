@@ -2,7 +2,6 @@ apiVersion: batch/v1
 kind: CronJob
 metadata:
   name: {{ include "omegasync.fullname" . }}-submit-cronjob
-  namespace:  omegasync
 spec:
   schedule: "*/5 * * * *"
   jobTemplate:

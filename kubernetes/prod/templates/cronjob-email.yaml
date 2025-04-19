@@ -13,9 +13,16 @@ spec:
               image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
               imagePullPolicy: {{ .Values.image.pullPolicy }}
               command:
-                - /bin/bash
-                - -c
-                - /srv/shiny-server/email.sh
+                - python3
+                - /srv/shiny-server/messaging.py
+              ports:
+                - containerPort: 3838
+              env:
+                - name: "OUTPUTS"
+                  value: "/srv/shiny-server/yaml_files/slurm/output/processed"
+              envFrom:
+                - secretRef:
+                    name: {{ include "omegasync.fullname" . }}-email-secret
               resources:
                 {{- toYaml .Values.resources | nindent 16 }}
               volumeMounts:
