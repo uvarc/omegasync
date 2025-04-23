@@ -8,10 +8,8 @@ import shutil
 
 # Configuration from environment variables
 SENDER_EMAIL = os.getenv("EMAIL_SENDER")
-SENDER_PASSWORD = os.getenv("EMAIL_PASSWORD").strip('"')
 SMTP_SERVER = os.getenv("SMTP_SERVER")
 SMTP_PORT = int(os.getenv("SMTP_PORT"))
-
 
 # Path settings
 OUTPUTS_DIR = os.getenv("OUTPUTS")
@@ -27,8 +25,7 @@ def send_email(receiver_email, subject, body_html):
 
     try:
         with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as server:
-            server.starttls()
-            server.login(SENDER_EMAIL, SENDER_PASSWORD)
+            # No starttls() or login() needed
             server.sendmail(SENDER_EMAIL, receiver_email, msg.as_string())
             print(f"Email sent to {receiver_email} with subject: {subject}")
     except Exception as e:
@@ -41,11 +38,8 @@ def main():
     if not entries:
         print("No new files — exiting script.")
         exit(0)
-    
-    for entry in Path(OUTPUTS_DIR).iterdir():
-        if entry.name == "sent" or not entry.is_dir():
-            continue
 
+    for entry in entries:
         message_yaml = entry / "message.yaml"
 
         if not message_yaml.exists():
