@@ -2,6 +2,8 @@ apiVersion: batch/v1
 kind: CronJob
 metadata:
   name: {{ include "omegasync.fullname" . }}-submit-cronjob
+  labels:
+    {{- include "omegasync.labels" . | nindent 4 }}
 spec:
   schedule: "*/5 * * * *"
   jobTemplate:
