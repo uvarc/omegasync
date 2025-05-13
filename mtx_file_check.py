@@ -11,6 +11,10 @@ def validate_mtx_file(file_path):
         # Parse number of nodes and edges
         num_nodes, num_edges = map(int, size_line.split())
 
+        # Check for maximum allowed nodes
+        if num_nodes > 10000:    #ADDED THIS LINE
+            raise ValueError(f"Node count exceeds limit: {num_nodes} > 10000")    #ADDED THIS LINE
+        
         # Parse the edges
         edges = []
         for edge_line in edge_lines:
