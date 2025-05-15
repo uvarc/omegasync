@@ -1,6 +1,7 @@
 import os
 import smtplib
 import yaml
+from email.mime.image import MIMEImage
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from pathlib import Path
@@ -16,26 +17,36 @@ OUTPUTS_DIR = os.getenv("OUTPUTS")
 SENT_DIR = Path(OUTPUTS_DIR) / "sent"
 
 def send_email(receiver_email, subject, body_html):
-    # Embed logo image
     logo_path = "/srv/shiny-server/yaml_files/codes/src/logo.png"
-    if os.path.exists(logo_path):
-        with open(logo_path, "rb") as img_file:
-            encoded_logo = base64.b64encode(img_file.read()).decode()
-        img_tag = f'<img src="data:image/png;base64,{encoded_logo}" alt="OmegaSync Logo" style="max-width:200px; margin-top:20px;">'
-        body_html = body_html.replace("<!-- INSERT LOGO HERE -->", img_tag)
-    else:
-        print(f"Warning: logo not found at {logo_path}, skipping image.")
-    
-    msg = MIMEMultipart("alternative")
+
+    msg = MIMEMultipart("related")  # 'related' lets you include inline images
     msg["From"] = SENDER_EMAIL
     msg["To"] = receiver_email
     msg["Subject"] = subject
 
-    msg.attach(MIMEText(body_html, "html"))
+    # Alternative for HTML body
+    msg_alt = MIMEMultipart("alternative")
+    msg.attach(msg_alt)
+
+    # Insert image reference into HTML
+    img_tag = '<img src="cid:logo_image" alt="OmegaSync Logo" style="max-width:200px; margin-top:20px;">'
+    body_html = body_html.replace("<!-- INSERT LOGO HERE -->", img_tag)
+    msg_alt.attach(MIMEText(body_html, "html"))
+
+    # Attach logo image (inline)
+    if os.path.exists(logo_path):
+        with open(logo_path, "rb") as img_file:
+            img = MIMEImage(img_file.read())
+            img.add_header("Content-ID", "<logo_image>")  # must match `cid:` in HTML
+            img.add_header("Content-Disposition", "inline", filename="omegasync_logo.png")
+            msg.attach(img)
+    else:
+        print(f"Warning: logo not found at {logo_path}, skipping image.")
 
     try:
         with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as server:
-            # No starttls() or login() needed
+            server.starttls()
+            server.login(SENDER_EMAIL, SENDER_PASSWORD)
             server.sendmail(SENDER_EMAIL, receiver_email, msg.as_string())
             print(f"Email sent to {receiver_email} with subject: {subject}")
     except Exception as e:
