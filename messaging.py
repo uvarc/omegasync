@@ -16,6 +16,16 @@ OUTPUTS_DIR = os.getenv("OUTPUTS")
 SENT_DIR = Path(OUTPUTS_DIR) / "sent"
 
 def send_email(receiver_email, subject, body_html):
+    # Embed logo image
+    logo_path = "/srv/shiny-server/yaml_files/codes/src/logo.png"
+    if os.path.exists(logo_path):
+        with open(logo_path, "rb") as img_file:
+            encoded_logo = base64.b64encode(img_file.read()).decode()
+        img_tag = f'<img src="data:image/png;base64,{encoded_logo}" alt="OmegaSync Logo" style="max-width:200px; margin-top:20px;">'
+        body_html = body_html.replace("<!-- INSERT LOGO HERE -->", img_tag)
+    else:
+        print(f"Warning: logo not found at {logo_path}, skipping image.")
+    
     msg = MIMEMultipart("alternative")
     msg["From"] = SENDER_EMAIL
     msg["To"] = receiver_email
