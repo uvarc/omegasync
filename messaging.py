@@ -45,8 +45,7 @@ def send_email(receiver_email, subject, body_html):
 
     try:
         with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as server:
-            server.starttls()
-            server.login(SENDER_EMAIL, SENDER_PASSWORD)
+            # No starttls() or login() needed
             server.sendmail(SENDER_EMAIL, receiver_email, msg.as_string())
             print(f"Email sent to {receiver_email} with subject: {subject}")
     except Exception as e:
