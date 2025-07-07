@@ -9,7 +9,7 @@ spec:
   resources:
     requests:
       # This doesn't really matter for a static PV
-      storage: 20Gi
+      storage: 1Gi
   volumeMode: Filesystem
   volumeName: omegasync-cephfs-pv
   storageClassName: csi-cephfs-sc
